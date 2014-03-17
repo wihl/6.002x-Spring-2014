@@ -179,7 +179,13 @@ class Robot(object):
         room:  a RectangularRoom object.
         speed: a float (speed > 0)
         """
-        raise NotImplementedError
+        assert type(room) == RectangularRoom
+        assert speed > 0
+        self.room = room
+        self.pos = room.getRandomPosition()
+        room.cleanTileAtPosition(self.pos)
+        self.setRobotDirection(random.random() * 360)
+        self.speed = speed
 
     def getRobotPosition(self):
         """
@@ -187,7 +193,7 @@ class Robot(object):
 
         returns: a Position object giving the robot's position.
         """
-        raise NotImplementedError
+        return self.pos
     
     def getRobotDirection(self):
         """
@@ -196,7 +202,7 @@ class Robot(object):
         returns: an integer d giving the direction of the robot as an angle in
         degrees, 0 <= d < 360.
         """
-        raise NotImplementedError
+        return self.direction
 
     def setRobotPosition(self, position):
         """
@@ -204,7 +210,8 @@ class Robot(object):
 
         position: a Position object.
         """
-        raise NotImplementedError
+        self.pos = position
+        self.room.cleanTileAtPosition(self.pos)
 
     def setRobotDirection(self, direction):
         """
@@ -212,7 +219,7 @@ class Robot(object):
 
         direction: integer representing an angle in degrees
         """
-        raise NotImplementedError
+        self.direction = direction
 
     def updatePositionAndClean(self):
         """
@@ -355,10 +362,27 @@ def main():
 
     numTiles = room.getNumTiles()
 
+    print "num clean tiles (preRobbie)", room.getNumCleanedTiles()
+    speed = random.random() * 10
+    robbie = Robot(room, speed)
 
-    # test case 
-    room = RectangularRoom(1,6)
-    
+    print "robbie is at:",robbie.getRobotPosition(),"with", \
+          room.getNumCleanedTiles(), "clean tiles"
+
+    robbie.setRobotPosition(room.getRandomPosition())
+
+    print "robbie is now at:",robbie.getRobotPosition(),"with", \
+          room.getNumCleanedTiles(), "clean tiles"
+
+    robbie.setRobotPosition(room.getRandomPosition())
+
+    print "robbie is now at:",robbie.getRobotPosition(),"with", \
+          room.getNumCleanedTiles(), "clean tiles"
+
+    robbie.setRobotPosition(room.getRandomPosition())
+
+    print "robbie is now at:",robbie.getRobotPosition(),"with", \
+          room.getNumCleanedTiles(), "clean tiles"
 
 if __name__ == "__main__":
     main()
