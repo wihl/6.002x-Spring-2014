@@ -253,7 +253,6 @@ class StandardRobot(Robot):
         self.setRobotPosition(newPos)
         self.room.cleanTileAtPosition(self.pos)
 
-
 # === Problem 3
 def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
                   robot_type):
@@ -275,23 +274,24 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     """
     avgs = []
     for trials in xrange(num_trials):
-        anim = ps2_visualize.RobotVisualization(num_robots, width, height)
+        #anim = ps2_visualize.RobotVisualization(num_robots, width, height)
         room = RectangularRoom(width, height)
         robots = [robot_type(room, speed)] * num_robots 
-
         ticks = 0
-        while (float(room.getNumCleanedTiles()) / float(room.getNumTiles())) < min_coverage:
-            anim.update(room, robots)
+        while (float(room.getNumCleanedTiles()) / float(room.getNumTiles())) <= min_coverage:
+            #anim.update(room, robots)
             ticks += 1
-            
-            [robots[i].updatePositionAndClean() for i in xrange(num_robots)]
+            for i in xrange(num_robots):
+                pos = robots[i].getRobotPosition()
+                #print "robot",i, int(pos.getX()), int(pos.getY()), room.getNumCleanedTiles()
+                robots[i].updatePositionAndClean()
             #print room.getNumCleanedTiles(),"/", float(room.getNumTiles())
         #print "trials, count:",trials, ticks
         avgs.append(ticks)
         #print "avgs",avgs
-        anim.done()
-    
-    return sum(avgs) / float(len(avgs))
+        #anim.done()
+    #print "sum:", avgs, sum(avgs), len(avgs)
+    return math.floor(sum(avgs) / float(len(avgs)))
 
 # Uncomment this line to see how much your simulation takes on average
 ##print  runSimulation(1, 1.0, 10, 10, 0.75, 30, StandardRobot)
@@ -310,7 +310,13 @@ class RandomWalkRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        self.setRobotDirection(random.random() * 360)
+        newPos = self.pos.getNewPosition(self.direction, self.speed)
+        while not self.room.isPositionInRoom(newPos):
+            self.setRobotDirection(random.random() * 360)
+            newPos = self.pos.getNewPosition(self.direction, self.speed)
+        self.setRobotPosition(newPos)
+        self.room.cleanTileAtPosition(self.pos)
 
 
 def showPlot1(title, x_label, y_label):
@@ -407,8 +413,9 @@ def main():
     print "robbie is now at:",robbie.getRobotPosition(),"with", \
           room.getNumCleanedTiles(), "clean tiles"
     '''
-    avg = runSimulation(3, 1.0, 20, 20, 0.78, 2, StandardRobot)
-    print "avg steps required:", avg
+    #avg = runSimulation(1, 1.0, 8, 8, 0.80, 2, RandomWalkRobot)
+    showPlot2("title","x","y")
+    #print "avg steps required:", avg
 
 if __name__ == "__main__":
     main()
