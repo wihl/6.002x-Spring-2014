@@ -1,4 +1,5 @@
 import pylab
+from collections import Counter
 
 # You may have to change this path
 WORDLIST_FILENAME = "words.txt"
@@ -20,12 +21,24 @@ def loadWords():
     print "  ", len(wordList), "words loaded."
     return wordList
 
+def makePlots(data, numBins):
+    pylab.hist(data, bins = numBins)
+    xmin,xmax = pylab.xlim()
+    ymin,ymax = pylab.ylim()
+    pylab.show()
+    #labelPlot(data)
+
 def plotVowelProportionHistogram(wordList, numBins=15):
     """
     Plots a histogram of the proportion of vowels in each word in wordList
     using the specified number of bins in numBins
     """
-    
+    vowelCounter = []
+    for word in wordList:
+        vowelCount = sum(Counter(vowel for vowel in word.lower() if vowel in "aeiou").values())
+        vowelCounter.append(vowelCount / float(len(word)))
+
+    makePlots(vowelCounter, numBins)
 
 if __name__ == '__main__':
     wordList = loadWords()
