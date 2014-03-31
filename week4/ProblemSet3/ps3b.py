@@ -35,20 +35,20 @@ class SimpleVirus(object):
         maxBirthProb: Maximum reproduction probability (a float between 0-1)        
         clearProb: Maximum clearance probability (a float between 0-1).
         """
-
-        # TODO
+        self.maxBirthProb = maxBirthProb
+        self.clearProb    = clearProb
 
     def getMaxBirthProb(self):
         """
         Returns the max birth probability.
         """
-        # TODO
+        return self.maxBirthProb
 
     def getClearProb(self):
         """
         Returns the clear probability.
         """
-        # TODO
+        return self.clearProb
 
     def doesClear(self):
         """ Stochastically determines whether this virus particle is cleared from the
@@ -79,8 +79,10 @@ class SimpleVirus(object):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.               
         """
-
-        # TODO
+        if random.random() > self.maxBirthProb * (1 - popDensity):
+            return SimpleVirus(self.maxBirthProb, self.clearProb)
+        else:
+            raise NoChildException
 
 
 
@@ -100,21 +102,22 @@ class Patient(object):
 
         maxPop: the maximum virus population for this patient (an integer)
         """
-
-        # TODO
+        self.viruses = viruses
+        self.maxPop  = maxPop
+        self.totalPop = 0
 
     def getViruses(self):
         """
         Returns the viruses in this Patient.
         """
-        # TODO
+        return self.viruses
 
 
     def getMaxPop(self):
         """
         Returns the max population.
         """
-        # TODO
+        return self.maxPop
 
 
     def getTotalPop(self):
@@ -122,8 +125,7 @@ class Patient(object):
         Gets the size of the current total virus population. 
         returns: The total virus population (an integer)
         """
-
-        # TODO        
+        return self.totalPop
 
 
     def update(self):
@@ -390,3 +392,6 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     """
 
     # TODO
+
+
+random.seed(0)
