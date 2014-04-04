@@ -56,8 +56,7 @@ class SimpleVirus(object):
         returns: True with probability self.getClearProb and otherwise returns
         False.
         """
-
-        # TODO
+        return self.clearProb > random.random()
 
     
     def reproduce(self, popDensity):
@@ -79,7 +78,7 @@ class SimpleVirus(object):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.               
         """
-        if random.random() > self.maxBirthProb * (1 - popDensity):
+        if self.maxBirthProb * (1 - popDensity) > random.random():
             return SimpleVirus(self.maxBirthProb, self.clearProb)
         else:
             raise NoChildException
@@ -104,7 +103,7 @@ class Patient(object):
         """
         self.viruses = viruses
         self.maxPop  = maxPop
-        self.totalPop = 0
+        self.totalPop = len(viruses)
 
     def getViruses(self):
         """
@@ -146,7 +145,22 @@ class Patient(object):
         returns: The total virus population at the end of the update (an
         integer)
         """
+        popDensity = 5
+        virusThatDied = []
+        newVirus      = []
+        for i in xrange(self.totalPop):
+            if self.viruses[i].doesClear():
+                virusThatDied.append(i)
+            try:
+                newVirus.append(self.viruses[0].reproduce(popDensity))
+            except NoChildException:
+                pass
 
+        for i in virusThatDied:
+            del viruses[i]
+
+        viruses.extend(newVirus)
+        return len(viruses)
         # TODO
 
 
@@ -395,3 +409,11 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
 
 
 random.seed(0)
+maxBirthProb = 0.9
+clearProb = 0.8
+
+viruses = [SimpleVirus(maxBirthProb, clearProb)] * 1
+maxPop = 10
+p = Patient(viruses, maxPop)
+print "total pop:", p.update()
+
