@@ -56,7 +56,7 @@ class SimpleVirus(object):
         returns: True with probability self.getClearProb and otherwise returns
         False.
         """
-        return random.random() > self.clearProb
+        return random.random() < self.clearProb
 
     
     def reproduce(self, popDensity):
@@ -104,6 +104,7 @@ class Patient(object):
         self.viruses = viruses
         self.maxPop  = maxPop
         self.totalPop = len(viruses)
+        self.populationDensity = 0.0
 
     def getViruses(self):
         """
@@ -146,20 +147,23 @@ class Patient(object):
         returns: The total virus population at the end of the update (an
         integer)
         """
-        popDensity = 5
         virus_copy = self.viruses[:]
         virusThatDied = []
         newVirus      = []
         for virus in virus_copy:
             if virus.doesClear():
                 self.viruses.remove(virus)
-            try:
-                newVirus.append(virus.reproduce(popDensity))
-            except NoChildException:
-                pass
+            else:
+                try:
+                    newVirus.append(virus.reproduce(popDensity))
+                    print "a new virus is born"
+                except NoChildException:
+                    pass
 
         self.viruses.extend(newVirus)
-        return len(viruses)
+        self.totalPop = len(self.viruses)
+        self.populationDensity = self.totalPop / float(self.maxPop)
+        return self.totalPop
 
 
 
@@ -407,7 +411,7 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
 
 
 random.seed(0)
-
+print "Virus testing"
 v1 = SimpleVirus(1.0, 0.0) #never cleared and always reproduces
 print v1.doesClear(), " should be False" 
 print type(v1.reproduce(0)), "should be virus type"
@@ -419,8 +423,16 @@ try:
 except NoChildException as e:
     print "correctly raised exception"
 v1 = SimpleVirus(1.0, 1.0) #always clears, always reproduces
-print v1.doesClear(), " should be true"
+print v1.doesClear(), " should be false"
 print type(v1.reproduce(0)), "should be virus type"
+
+print "\n\nPatient Testing"
+
+virus = SimpleVirus(1.0, 0.0)
+patient = Patient([virus], 100)
+print "Updating the patient for 100 trials..."
+#patient.update implemented incorrectly
+print patient.getTotalPop(), "should be 100"
 
 '''
 maxBirthProb = 0.9
