@@ -309,8 +309,27 @@ class ResistantVirus(SimpleVirus):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.
         """
-        return None
-        # TODO
+        # step 1 check resistances
+        for r in activeDrugs:
+            if not self.resistances[r]:
+                raise NoChildException
+                return None #defensive
+
+        # step 2 decide to reproduce
+        if random.random() < self.maxBirthProb * (1 - popDensity):
+            # step 3 apply mutations
+            childResistances = {}
+            for r in self.resistances:
+                if random.random() < (1 - self.mutProb):
+                    print "inner loop"
+                    childResistances[r] = random.random() < self.mutProb
+            child =  ResistantVirus(self.maxBirthProb, self.clearProb,
+                                  childResistances, self.mutProb)
+        else:
+            raise NoChildException
+
+
+        return child
 
             
 
@@ -429,7 +448,7 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     # TODO
 
 
-random.seed(0)
+#random.seed(0)
 '''
 
 print "Virus testing"
@@ -458,4 +477,11 @@ print patient.getTotalPop(), "should be 100"
 simulationWithoutDrug(100, 1000, 0.1, 0.05, 1)
 '''
 
-rv= ResistantVirus(0.0, 1.0, {"drug1":True, "drug2":False}, 0.0)
+rv= ResistantVirus(1.0, 0.0, {"drug2": True}, 1.0)
+
+try:
+    child = rv.reproduce(0,[])
+    print rv.getResistances()
+    print child.getResistances()
+except NoChildException as e:
+    print "no child virus"
