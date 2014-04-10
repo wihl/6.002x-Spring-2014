@@ -155,8 +155,8 @@ class Patient(object):
                 self.viruses.remove(virus)
             else:
                 try:
-                    newVirus.append(virus.reproduce(popDensity))
-                    print "a new virus is born"
+                    newVirus.append(virus.reproduce(self.populationDensity))
+                    #print "a new virus is born"
                 except NoChildException:
                     pass
 
