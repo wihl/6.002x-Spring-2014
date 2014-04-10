@@ -185,10 +185,26 @@ def simulationWithoutDrug(numViruses, maxPop, maxBirthProb, clearProb,
     clearProb: Maximum clearance probability (a float between 0-1)
     numTrials: number of simulation runs to execute (an integer)
     """
+    numSteps = 300
+    virusPop = [0] * numSteps
 
-    # TODO
+    for trial in xrange(numTrials):
+        viruses = []
+        for i in xrange(numViruses):
+            viruses.append(SimpleVirus(maxBirthProb, clearProb))
+            patient = Patient(viruses, maxPop)
+        for i in xrange(numSteps):
+            virusPop[i] += patient.update()
 
+    for i in xrange(numSteps):
+        virusPop[i] = virusPop[i] / float(numTrials)
 
+    pylab.plot(virusPop, label="population")
+    pylab.title("Simulation without drugs")
+    pylab.xlabel("time")
+    pylab.ylabel("population")
+    pylab.legend(loc = 1)
+    pylab.show()
 
 #
 # PROBLEM 4
@@ -411,6 +427,8 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
 
 
 random.seed(0)
+'''
+
 print "Virus testing"
 v1 = SimpleVirus(1.0, 0.0) #never cleared and always reproduces
 print v1.doesClear(), " should be False" 
@@ -435,11 +453,5 @@ print "Updating the patient for 100 trials..."
 print patient.getTotalPop(), "should be 100"
 
 '''
-maxBirthProb = 0.9
-clearProb = 0.8
 
-viruses = [SimpleVirus(maxBirthProb, clearProb)] * 1
-maxPop = 10
-p = Patient(viruses, maxPop)
-print "total pop:", p.update()
-'''
+simulationWithoutDrug(100, 1000, 0.1, 0.05, 1)
