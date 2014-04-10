@@ -56,7 +56,7 @@ class SimpleVirus(object):
         returns: True with probability self.getClearProb and otherwise returns
         False.
         """
-        return self.clearProb > random.random()
+        return random.random() > self.clearProb
 
     
     def reproduce(self, popDensity):
@@ -78,7 +78,7 @@ class SimpleVirus(object):
         maxBirthProb and clearProb values as this virus. Raises a
         NoChildException if this virus particle does not reproduce.               
         """
-        if self.maxBirthProb * (1 - popDensity) > random.random():
+        if random.random() > self.maxBirthProb * (1 - popDensity):
             return SimpleVirus(self.maxBirthProb, self.clearProb)
         else:
             raise NoChildException
@@ -127,6 +127,7 @@ class Patient(object):
         return self.totalPop
 
 
+
     def update(self):
         """
         Update the state of the virus population in this patient for a single
@@ -146,22 +147,19 @@ class Patient(object):
         integer)
         """
         popDensity = 5
+        virus_copy = self.viruses[:]
         virusThatDied = []
         newVirus      = []
-        for i in xrange(self.totalPop):
-            if self.viruses[i].doesClear():
-                virusThatDied.append(i)
+        for virus in virus_copy:
+            if virus.doesClear():
+                self.viruses.remove(virus)
             try:
-                newVirus.append(self.viruses[0].reproduce(popDensity))
+                newVirus.append(virus.reproduce(popDensity))
             except NoChildException:
                 pass
 
-        for i in virusThatDied:
-            del viruses[i]
-
-        viruses.extend(newVirus)
+        self.viruses.extend(newVirus)
         return len(viruses)
-        # TODO
 
 
 
@@ -409,6 +407,22 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
 
 
 random.seed(0)
+
+v1 = SimpleVirus(1.0, 0.0) #never cleared and always reproduces
+print v1.doesClear(), " should be False" 
+print type(v1.reproduce(0)), "should be virus type"
+
+v1 = SimpleVirus(0.0, 0.0) #never cleared, never produces
+print v1.doesClear(), " should be true"
+try:
+    print type(v1.reproduce(0)), "exception should be thrown"
+except NoChildException as e:
+    print "correctly raised exception"
+v1 = SimpleVirus(1.0, 1.0) #always clears, always reproduces
+print v1.doesClear(), " should be true"
+print type(v1.reproduce(0)), "should be virus type"
+
+'''
 maxBirthProb = 0.9
 clearProb = 0.8
 
@@ -416,4 +430,4 @@ viruses = [SimpleVirus(maxBirthProb, clearProb)] * 1
 maxPop = 10
 p = Patient(viruses, maxPop)
 print "total pop:", p.update()
-
+'''
