@@ -320,9 +320,18 @@ class ResistantVirus(SimpleVirus):
             # step 3 apply mutations
             childResistances = {}
             for r in self.resistances:
-                if random.random() < (1 - self.mutProb):
-                    print "inner loop"
-                    childResistances[r] = random.random() < self.mutProb
+                pb = random.random()
+                if self.resistances[r]:
+                    if pb < (1 - self.mutProb):
+                        childResistances[r] = self.resistances[r]
+                    else:
+                        childResistances[r] = not self.resistances[r]
+                else:
+                    if pb < (1 - self.mutProb):
+                        childResistances[r] = not self.resistances[r]
+                    else:
+                        childResistances[r] = self.resistances[r]
+
             child =  ResistantVirus(self.maxBirthProb, self.clearProb,
                                   childResistances, self.mutProb)
         else:
@@ -477,7 +486,8 @@ print patient.getTotalPop(), "should be 100"
 simulationWithoutDrug(100, 1000, 0.1, 0.05, 1)
 '''
 
-rv= ResistantVirus(1.0, 0.0, {"drug2": True}, 1.0)
+rv= ResistantVirus(1.0, 0.0, {"drug1": True, "drug2": True,
+                              "drug3":True, "drug4":True}, 1.0)
 
 try:
     child = rv.reproduce(0,[])
