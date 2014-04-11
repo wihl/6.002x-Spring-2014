@@ -442,7 +442,7 @@ class TreatedPatient(Patient):
                 resistSet = set(virus.getResistances())
                 if resistSet.issubset(set(self.prescriptions)):
                     try:
-                        newVirus.append(virus.reproduce(self.populationDensity))
+                        newVirus.append(virus.reproduce(self.populationDensity,self.prescriptions))
                         #print "a new virus is born"
                     except NoChildException:
                         pass
@@ -535,10 +535,11 @@ virus = ResistantVirus(1.0, 1.0, {}, 0.0)
 patient = TreatedPatient([virus], 100)
 '''
 virus1 = ResistantVirus(1.0, 0.0, {"drug1": True}, 0.0)
-virus2 = ResistantVirus(1.0, 0.0, {"drug1": False, "drug2": True}, 0.0)
-virus3 = ResistantVirus(1.0, 0.0, {"drug1": True, "drug2": True}, 0.0)
-patient = TreatedPatient([virus1, virus2, virus3], 100)
+patient = TreatedPatient([virus1], 100)
+for i in xrange(100):
+    r  = patient.update()
 
+print r
 print patient.getResistPop(['drug1']), "should be 2"
 print patient.getResistPop(['drug2']), "should be 2"
 print patient.getResistPop(['drug1','drug2']), "should be 1"
