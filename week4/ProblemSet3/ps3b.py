@@ -359,9 +359,8 @@ class TreatedPatient(Patient):
 
         maxPop: The  maximum virus population for this patient (an integer)
         """
-
-        # TODO
-
+        Patient.__init__(self, viruses, maxPop)
+        self.prescriptions = []
 
     def addPrescription(self, newDrug):
         """
@@ -373,8 +372,8 @@ class TreatedPatient(Patient):
 
         postcondition: The list of drugs being administered to a patient is updated
         """
-
-        # TODO
+        if newDrug not in self.prescriptions:
+            self.prescriptions.append(newDrug)
 
 
     def getPrescriptions(self):
@@ -384,8 +383,7 @@ class TreatedPatient(Patient):
         returns: The list of drug names (strings) being administered to this
         patient.
         """
-
-        # TODO
+        return self.prescriptions
 
 
     def getResistPop(self, drugResist):
@@ -399,8 +397,17 @@ class TreatedPatient(Patient):
         returns: The population of viruses (an integer) with resistances to all
         drugs in the drugResist list.
         """
+        popCount = 0
+        lenDrugResist = len(drugResist)
+        for virus in self.viruses:
+            resistCount = 0
+            for drug in drugResist:
+                if virus.isResistantTo(drug):
+                    resistCount += 1
+            if resistCount == lenDrugResist:
+                popCount += 1
 
-        # TODO
+        return popCount
 
 
     def update(self):
@@ -484,7 +491,8 @@ print "Updating the patient for 100 trials..."
 print patient.getTotalPop(), "should be 100"
 
 simulationWithoutDrug(100, 1000, 0.1, 0.05, 1)
-'''
+
+# Part 4
 
 rv= ResistantVirus(1.0, 0.0, {"drug2": True}, 1.0)
 
@@ -494,3 +502,34 @@ try:
     print child.getResistances()
 except NoChildException as e:
     print "no child virus"
+
+'''
+# Part 5
+#never cleared, always reproduces
+#virus = ResistantVirus(1.0, 0.0, {'drug1':True}, 0.0)
+#patient = TreatedPatient([virus], 100)
+#print "resist pop", patient.getResistPop(['drug1'])
+
+'''
+virus = ResistantVirus(1.0, 1.0, {}, 0.0)
+patient = TreatedPatient([virus], 100)
+'''
+virus1 = ResistantVirus(1.0, 0.0, {"drug1": True}, 0.0)
+virus2 = ResistantVirus(1.0, 0.0, {"drug1": False, "drug2": True}, 0.0)
+virus3 = ResistantVirus(1.0, 0.0, {"drug1": True, "drug2": True}, 0.0)
+patient = TreatedPatient([virus1, virus2, virus3], 100)
+
+print patient.getResistPop(['drug1']), "should be 2"
+print patient.getResistPop(['drug2']), "should be 2"
+print patient.getResistPop(['drug1','drug2']), "should be 1"
+print patient.getResistPop(['drug3']), "should be 0"
+print patient.getResistPop(['drug1','drug3']), "should be 0"
+print patient.getResistPop(['drug1','drug2','drug3']), "should be 0"
+
+
+'''
+virus1 = ResistantVirus(1.0, 0.0, {"drug1": True}, 0.0)
+virus2 = ResistantVirus(1.0, 0.0, {"drug1": False}, 0.0)
+patient = TreatedPatient([virus1, virus2], 1000000)
+patient.addPrescription("drug1")
+'''
