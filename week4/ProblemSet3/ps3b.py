@@ -504,12 +504,12 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
 
     pylab.plot(virusPopNoDrug, label="no drug")
     pylab.plot(virusPopWithDrug, label="with drug")
-    print virusPopNoDrug
+    #print virusPopNoDrug
     pylab.title("Simulation with drugs")
     pylab.xlabel("time")
     pylab.ylabel("population")
     pylab.legend(loc = 1)
-    #pylab.show()
+    pylab.show()
 
 
 
