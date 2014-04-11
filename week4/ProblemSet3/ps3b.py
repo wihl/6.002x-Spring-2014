@@ -480,8 +480,37 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     numTrials: number of simulation runs to execute (an integer)
     
     """
+    numSteps = 300
+    virusPopNoDrug   = [0] * numSteps
+    virusPopWithDrug = [0] * numSteps
 
-    # TODO
+    for trial in xrange(numTrials):
+        viruses = []
+        for i in xrange(numViruses):
+            viruses.append(ResistantVirus(maxBirthProb, clearProb, resistances, mutProb))
+
+        patient = TreatedPatient(viruses, maxPop)
+        for i in xrange(numSteps):
+            if i == 150:
+                patient.addPrescription('guttagonol')
+            totalPop = patient.update()
+            virusPopNoDrug[i] += totalPop
+            virusPopWithDrug[i] += patient.getResistPop(['guttagonol'])
+
+
+    for i in xrange(numSteps):
+        virusPopNoDrug[i] = virusPopNoDrug[i] / float(numTrials)
+        virusPopWithDrug[i] = virusPopWithDrug[i] / float(numTrials)
+
+    pylab.plot(virusPopNoDrug, label="no drug")
+    pylab.plot(virusPopWithDrug, label="with drug")
+    print virusPopNoDrug
+    pylab.title("Simulation with drugs")
+    pylab.xlabel("time")
+    pylab.ylabel("population")
+    pylab.legend(loc = 1)
+    #pylab.show()
+
 
 
 #random.seed(0)
@@ -523,34 +552,15 @@ try:
 except NoChildException as e:
     print "no child virus"
 
-'''
-# Part 5
-#never cleared, always reproduces
-#virus = ResistantVirus(1.0, 0.0, {'drug1':True}, 0.0)
-#patient = TreatedPatient([virus], 100)
-#print "resist pop", patient.getResistPop(['drug1'])
-
-'''
 virus = ResistantVirus(1.0, 1.0, {}, 0.0)
 patient = TreatedPatient([virus], 100)
-'''
 virus1 = ResistantVirus(1.0, 0.0, {"drug1": True}, 0.0)
 patient = TreatedPatient([virus1], 100)
 for i in xrange(100):
     r  = patient.update()
 
-print r
-print patient.getResistPop(['drug1']), "should be 2"
-print patient.getResistPop(['drug2']), "should be 2"
-print patient.getResistPop(['drug1','drug2']), "should be 1"
-print patient.getResistPop(['drug3']), "should be 0"
-print patient.getResistPop(['drug1','drug3']), "should be 0"
-print patient.getResistPop(['drug1','drug2','drug3']), "should be 0"
-
-
 '''
-virus1 = ResistantVirus(1.0, 0.0, {"drug1": True}, 0.0)
-virus2 = ResistantVirus(1.0, 0.0, {"drug1": False}, 0.0)
-patient = TreatedPatient([virus1, virus2], 1000000)
-patient.addPrescription("drug1")
-'''
+
+# Problem 5
+simulationWithDrug(100, 1000, 0.1, 0.05, {'guttagonol': False}, 0.005, 100)
+
