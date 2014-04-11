@@ -361,6 +361,7 @@ class TreatedPatient(Patient):
         """
         Patient.__init__(self, viruses, maxPop)
         self.prescriptions = []
+        self.populationDensity = 0.0
 
     def addPrescription(self, newDrug):
         """
@@ -430,8 +431,27 @@ class TreatedPatient(Patient):
         returns: The total virus population at the end of the update (an
         integer)
         """
+        virus_copy = self.viruses[:]
+        virusThatDied = []
+        newVirus      = []
+        for virus in virus_copy:
+            if virus.doesClear():
+                self.viruses.remove(virus)
+            else:
+                # if the virus has resistance to all prescriptions, it is allowed to reproduce
+                resistSet = set(virus.getResistances())
+                if resistSet.issubset(set(self.prescriptions)):
+                    try:
+                        newVirus.append(virus.reproduce(self.populationDensity))
+                        #print "a new virus is born"
+                    except NoChildException:
+                        pass
 
-        # TODO
+        self.viruses.extend(newVirus)
+        self.totalPop = len(self.viruses)
+        self.populationDensity = self.totalPop / float(self.maxPop)
+        return self.totalPop
+
 
 
 
