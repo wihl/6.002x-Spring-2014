@@ -459,7 +459,7 @@ class TreatedPatient(Patient):
 # PROBLEM 5
 #
 def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
-                       mutProb, numTrials):
+                       mutProb, numTrials, delayTime=150, showPlot = True):
     """
     Runs simulations and plots graphs for problem 5.
 
@@ -480,7 +480,7 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
     numTrials: number of simulation runs to execute (an integer)
     
     """
-    numSteps = 300
+    numSteps = delayTime + 150
     virusPopNoDrug   = [0] * numSteps
     virusPopWithDrug = [0] * numSteps
 
@@ -491,7 +491,7 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
 
         patient = TreatedPatient(viruses, maxPop)
         for i in xrange(numSteps):
-            if i == 150:
+            if i == delayTime:
                 patient.addPrescription('guttagonol')
             totalPop = patient.update()
             virusPopNoDrug[i] += totalPop
@@ -502,15 +502,16 @@ def simulationWithDrug(numViruses, maxPop, maxBirthProb, clearProb, resistances,
         virusPopNoDrug[i] = virusPopNoDrug[i] / float(numTrials)
         virusPopWithDrug[i] = virusPopWithDrug[i] / float(numTrials)
 
-    pylab.plot(virusPopNoDrug, label="no drug")
-    pylab.plot(virusPopWithDrug, label="with drug")
-    #print virusPopNoDrug
-    pylab.title("Simulation with drugs")
-    pylab.xlabel("time")
-    pylab.ylabel("population")
-    pylab.legend(loc = 1)
-    pylab.show()
-
+    if showPlot == True:
+        #pylab.plot(virusPopNoDrug, label="no drug")
+        pylab.plot(virusPopWithDrug, label="with drug")
+        #print virusPopNoDrug
+        pylab.title("Simulation with drugs")
+        pylab.xlabel("time")
+        pylab.ylabel("population")
+        pylab.legend(loc = 1)
+        pylab.show()
+    return virusPopWithDrug
 
 
 #random.seed(0)
@@ -562,5 +563,5 @@ for i in xrange(100):
 '''
 
 # Problem 5
-simulationWithDrug(100, 1000, 0.1, 0.05, {'guttagonol': False}, 0.005, 100)
+#simulationWithDrug(100, 1000, 0.1, 0.05, {'guttagonol': False}, 0.005, 100)
 
