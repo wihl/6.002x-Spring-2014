@@ -104,9 +104,9 @@ class WeightedDigraph(Digraph):
 
     def childrenOf(self, node):
         children = []
-        for k in self.edges:
-            for d in self.edges[k]:
-                children.append(d[0])
+        for k in self.edges[node]:
+            print k[0]
+            children.append(k[0])
         return children
 
     def __str__(self):

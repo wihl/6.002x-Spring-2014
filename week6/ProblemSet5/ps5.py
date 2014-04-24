@@ -201,6 +201,7 @@ if __name__ == '__main__':
     print g
     print g.childrenOf(e1)
 
+    '''
     # Pb 1 test 5
     nh = Node('h')
     nj = Node('j')
@@ -229,9 +230,12 @@ if __name__ == '__main__':
     g.addEdge(randomEdge)
     randomEdge = WeightedEdge(nm, nh, 68, 27)
     g.addEdge(randomEdge)
-    print g.childrenOf(nh), "should be [h,k,m]"
-    print g.childrenOf(nj), "should be [h,k,m]"
+    print g.childrenOf(nh), "should be [h,k,k,m]"
+    print g.childrenOf(nj), "should be []"
+    from pprint import pprint
+    pprint (g.edges)
 
+    '''
     #     Test cases
     from pprint import pprint
     mitMap = load_map("mit_map.txt")
@@ -241,7 +245,7 @@ if __name__ == '__main__':
     #pprint (mitMap.edges)
     print mitMap.edges
     '''
-
+    exit(0)
     LARGE_DIST = 1000000
     from pprint import pprint
     mitMap = load_map("mit_map.txt")
