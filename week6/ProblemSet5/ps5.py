@@ -116,16 +116,21 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors):
 
     def DFS(graph, start, end, path, shortest):
         path = path + [start]
-        #pd1, pd2 = pathDist(graph,path)
-        #if pd1 > 0.0:
-        #    print "Current DFS path:",printPath(path), "Dist:",pathDist(graph,path)
+        pd1, pd2 = pathDist(graph,path)
+        if pd1 > 0.0:
+            print "Current DFS path:",printPath(path), "Dist:",pathDist(graph,path)
         if start == end:
             return path
         for node in graph.childrenOf(start):
             if node not in path: # avoid cycles
-                if shortest == None or len(path) < len(shortest):
+                if shortest == None: # or pathTotalDist < sTotalDist:
                     newPath = DFS(graph, node, end, path, shortest)
                     if newPath != None:
+                        pathTotalDist, pathOutsideDist = pathDist(graph,path)
+                        sTotalDist = None
+                        if shortest != None:
+                            sTotalDist, sOutsideDist = pathDist(graph,shortest)
+                        print "current path dist",pathTotalDist, "shortest path dist",sTotalDist
                         shortest = newPath
         return shortest
     
@@ -135,12 +140,14 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors):
     path = []
     
     dfs = DFS(digraph,Node(start),Node(end), [], None)
-    totalDist, outdoorDist = pathDist(digraph, path)
+    totalDist, outdoorDist = pathDist(digraph, dfs)
+    print "dfs, totaldist, outdoordist", dfs, totalDist,outdoorDist
     if totalDist > maxTotalDist:
         raise ValueError("total distance exceeded")
     if outdoorDist > maxDistOutdoors:
         raise ValueError("outdoor distance exceeded")
-    return dfs
+    strdfs = [str(d) for d in dfs]
+    return strdfs
 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
@@ -201,7 +208,6 @@ if __name__ == '__main__':
     print g
     print g.childrenOf(e1)
 
-    '''
     # Pb 1 test 5
     nh = Node('h')
     nj = Node('j')
@@ -230,12 +236,11 @@ if __name__ == '__main__':
     g.addEdge(randomEdge)
     randomEdge = WeightedEdge(nm, nh, 68, 27)
     g.addEdge(randomEdge)
-    print g.childrenOf(nh), "should be [h,k,k,m]"
+    print g.childrenOf(nh), "should be [m,k,k,m]"
     print g.childrenOf(nj), "should be []"
     from pprint import pprint
     pprint (g.edges)
 
-    '''
     #     Test cases
     from pprint import pprint
     mitMap = load_map("mit_map.txt")
@@ -244,8 +249,8 @@ if __name__ == '__main__':
     print 'nodes', mitMap.nodes
     #pprint (mitMap.edges)
     print mitMap.edges
-    '''
-    exit(0)
+
+
     LARGE_DIST = 1000000
     from pprint import pprint
     mitMap = load_map("mit_map.txt")
@@ -265,6 +270,25 @@ if __name__ == '__main__':
 
     #     print "DFS: ", dfsPath1
     #print "Correct? BFS: {0}; DFS: {1}".format(expectedPath1 == brutePath1, expectedPath1 == dfsPath1)
+    '''
+    n1 = Node('1')
+    n2 = Node('2')
+    n3 = Node('3')
+    n4 = Node('4')
+    map2 = WeightedDigraph()
+    map2.addNode(n1)
+    map2.addNode(n2)
+    map2.addNode(n3)
+    map2.addNode(n4)
+    map2.addEdge(WeightedEdge(n1,n2,10,5))
+    map2.addEdge(WeightedEdge(n1,n4,15,1))
+    map2.addEdge(WeightedEdge(n2,n3,8,5))
+    map2.addEdge(WeightedEdge(n4,n3,8,5))
+    print bruteForceSearch(map2,'1','3',18,18), "should be [1,2,3]"
+
+    from pprint import pprint
+    pprint (map2.edges)
+
 
 #     Test case 2
 #     print "---------------"
