@@ -43,9 +43,10 @@ def yieldAllCombos(items):
         bag2 = []
         for j in xrange(N):
             # test bit jth of integer i
-            if (i >> j) % 3 == 0:
+            k = 3 ** j
+            if (i // k) % 3 == 0:
                 bag1.append(items[j])
-            elif (i >> j) % 3 == 1:
+            elif (i // k) % 3 == 1:
                 bag2.append(items[j])
             # else pass - do not add to any bag
         yield bag1, bag2
