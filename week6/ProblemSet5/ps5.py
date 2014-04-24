@@ -35,9 +35,30 @@ def load_map(mapFilename):
     Returns:
         a directed graph representing the map
     """
-    # TODO
     print "Loading map from file..."
-        
+    from pprint import pprint
+    with open(mapFilename) as f:
+        map = WeightedDigraph()
+        nodes = set([])
+        for line in f.readlines():
+            src, dest, total, outdoor = line.split()
+            try:
+                srcNode = Node(src)
+                map.addNode(srcNode)
+            except ValueError:
+                pass
+            try:
+                destNode = Node(dest)
+                map.addNode(destNode)
+            except ValueError:
+                pass
+            edge = WeightedEdge(srcNode, destNode, total, outdoor)
+            map.addEdge(edge)
+            #print src,dest,total,outdoor
+            #pprint(map.edges)
+            #raw_input("Press Enter to continue...")
+        f.close()
+    return map
 
 #
 # Problem 3: Finding the Shortest Path using Brute Force Search
@@ -110,6 +131,7 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
 if __name__ == '__main__':
 
 # Pb 1 tests
+    '''
     g = WeightedDigraph()
     na = Node('a')
     nb = Node('b')
@@ -161,15 +183,17 @@ if __name__ == '__main__':
     g.addEdge(randomEdge)
     print g.childrenOf(nh), "should be [h,k,m]"
     print g.childrenOf(nj), "should be [h,k,m]"
+    '''
 
 
-#     Test cases
-#     mitMap = load_map("mit_map.txt")
-#     print isinstance(mitMap, Digraph)
-#     print isinstance(mitMap, WeightedDigraph)
-#     print 'nodes', mitMap.nodes
-#     print 'edges', mitMap.edges
-
+    #     Test cases
+    from pprint import pprint
+    mitMap = load_map("mit_map.txt")
+    print isinstance(mitMap, Digraph)
+    print isinstance(mitMap, WeightedDigraph)
+    print 'nodes', mitMap.nodes
+    #pprint (mitMap.edges)
+    print mitMap.edges
 
 #     LARGE_DIST = 1000000
 

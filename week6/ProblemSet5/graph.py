@@ -98,18 +98,9 @@ class WeightedDigraph(Digraph):
         if not(src in self.nodes and dest in self.nodes):
             raise ValueError('Node not in graph')
         # each edge member looks like [dest, (totalDist, outdoorDist)]
-        if dest in self.childrenOf(src):
-            # just update the values
-            for d in self.edges[src]:
-                if d[0] == dest:
-                    d = [dest, (float(weightedEdge.getTotalDistance()),
-                                float(weightedEdge.getOutdoorDistance()))]
-                    break
-        else:
-            # append it
-            self.edges[src].append([dest, 
-                                    (float(weightedEdge.getTotalDistance()), 
-                                     float(weightedEdge.getOutdoorDistance()))])
+        self.edges[src].append([dest, 
+                                (float(weightedEdge.getTotalDistance()), 
+                                 float(weightedEdge.getOutdoorDistance()))])
 
     def childrenOf(self, node):
         children = []
