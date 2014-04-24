@@ -91,8 +91,56 @@ def bruteForceSearch(digraph, start, end, maxTotalDist, maxDistOutdoors):
         If there exists no path that satisfies maxTotalDist and
         maxDistOutdoors constraints, then raises a ValueError.
     """
-    #TODO
-    pass
+    def printPath(path):
+        result = ''
+        for i in range(len(path)):
+            result = result + str(path[i])
+            if i != len(path) - 1:
+                result = result + '->'
+        return result
+
+    def pathDist(graph,path):
+        totalDist = 0.0
+        outdoorDist = 0.0
+        for i in range(len(path) - 1):
+            srcEdges = graph.edges[path[i]]
+            pathFound = False
+            for d in srcEdges:
+                if d[0] == path[i+1]:
+                    pathFound = True
+                    totalDist += d[1][0]
+                    outdoorDist += d[1][1]
+            if not pathFound:
+                return 0.0, 0.0
+        return totalDist, outdoorDist
+
+    def DFS(graph, start, end, path, shortest):
+        path = path + [start]
+        #pd1, pd2 = pathDist(graph,path)
+        #if pd1 > 0.0:
+        #    print "Current DFS path:",printPath(path), "Dist:",pathDist(graph,path)
+        if start == end:
+            return path
+        for node in graph.childrenOf(start):
+            if node not in path: # avoid cycles
+                if shortest == None or len(path) < len(shortest):
+                    newPath = DFS(graph, node, end, path, shortest)
+                    if newPath != None:
+                        shortest = newPath
+        return shortest
+    
+
+    totalDist = 0.0
+    outdoorDist = 0.0
+    path = []
+    
+    dfs = DFS(digraph,Node(start),Node(end), [], None)
+    totalDist, outdoorDist = pathDist(digraph, path)
+    if totalDist > maxTotalDist:
+        raise ValueError("total distance exceeded")
+    if outdoorDist > maxDistOutdoors:
+        raise ValueError("outdoor distance exceeded")
+    return dfs
 
 #
 # Problem 4: Finding the Shorest Path using Optimized Search Method
@@ -183,8 +231,6 @@ if __name__ == '__main__':
     g.addEdge(randomEdge)
     print g.childrenOf(nh), "should be [h,k,m]"
     print g.childrenOf(nj), "should be [h,k,m]"
-    '''
-
 
     #     Test cases
     from pprint import pprint
@@ -194,20 +240,27 @@ if __name__ == '__main__':
     print 'nodes', mitMap.nodes
     #pprint (mitMap.edges)
     print mitMap.edges
+    '''
 
-#     LARGE_DIST = 1000000
+    LARGE_DIST = 1000000
+    from pprint import pprint
+    mitMap = load_map("mit_map.txt")
+    pprint (mitMap.edges)
 
-#     Test case 1
-#     print "---------------"
-#     print "Test case 1:"
-#     print "Find the shortest-path from Building 32 to 56"
-#     expectedPath1 = ['32', '56']
-#     brutePath1 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
-#     dfsPath1 = directedDFS(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
-#     print "Expected: ", expectedPath1
-#     print "Brute-force: ", brutePath1
-#     print "DFS: ", dfsPath1
-#     print "Correct? BFS: {0}; DFS: {1}".format(expectedPath1 == brutePath1, expectedPath1 == dfsPath1)
+    #     Test case 1
+    print "---------------"
+    print "Test case 1:"
+    print "Find the shortest-path from Building 32 to 56"
+    expectedPath1 = ['32', '56']
+    brutePath1 = bruteForceSearch(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
+
+    #     dfsPath1 = directedDFS(mitMap, '32', '56', LARGE_DIST, LARGE_DIST)
+    print "Expected: ", expectedPath1
+    print "Brute-force: ", brutePath1
+    print bruteForceSearch(mitMap, '57', '68', LARGE_DIST, LARGE_DIST)
+
+    #     print "DFS: ", dfsPath1
+    #print "Correct? BFS: {0}; DFS: {1}".format(expectedPath1 == brutePath1, expectedPath1 == dfsPath1)
 
 #     Test case 2
 #     print "---------------"
