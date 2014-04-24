@@ -68,3 +68,59 @@ class Digraph(object):
             for d in self.edges[str(k)]:
                 res = '{0}{1}->{2}\n'.format(res, k, d)
         return res[:-1]
+
+
+
+# my code here - do not touch above this line
+class WeightedEdge(Edge):
+    def __init__(self,src,dest,totalDist,outdoorDist):
+        self.totalDist = totalDist
+        self.outdoorDist = outdoorDist
+        super(WeightedEdge,self).__init__(src,dest)
+
+    def getTotalDistance(self):
+        return self.totalDist
+
+    def getOutdoorDistance(self):
+        return self.outdoorDist
+
+    def __str__(self):
+        return '{0}->{1} ({2}, {3})'.format(self.src.getName(),self.dest.getName(),self.totalDist,self.outdoorDist)
+
+
+class WeightedDigraph(Digraph):
+    def __init__(self):
+        super(WeightedDigraph,self).__init__()
+
+    def addEdge(self, weightedEdge):
+        src = weightedEdge.getSource()
+        dest = weightedEdge.getDestination()
+        if not(src in self.nodes and dest in self.nodes):
+            raise ValueError('Node not in graph')
+        # each edge member looks like [dest, (totalDist, outdoorDist)]
+        if dest in self.childrenOf(src):
+            # just update the values
+            for d in self.edges[src]:
+                if d[0] == dest:
+                    d = [dest, (float(weightedEdge.getTotalDistance()),
+                                float(weightedEdge.getOutdoorDistance()))]
+                    break
+        else:
+            # append it
+            self.edges[src].append([dest, 
+                                    (float(weightedEdge.getTotalDistance()), 
+                                     float(weightedEdge.getOutdoorDistance()))])
+
+    def childrenOf(self, node):
+        children = []
+        for k in self.edges:
+            for d in self.edges[k]:
+                children.append(d[0])
+        return children
+
+    def __str__(self):
+        res = ''
+        for k in self.edges:
+            for d in self.edges[k]:
+                res = '{0}{1}->{2} ({3}, {4})\n'.format(res,k,d[0],d[1][0],d[1][1])
+        return res[:-1]

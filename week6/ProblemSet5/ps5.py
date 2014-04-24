@@ -104,9 +104,65 @@ def directedDFS(digraph, start, end, maxTotalDist, maxDistOutdoors):
     #TODO
     pass
 
+
 # Uncomment below when ready to test
 #### NOTE! These tests may take a few minutes to run!! ####
-# if __name__ == '__main__':
+if __name__ == '__main__':
+
+# Pb 1 tests
+    g = WeightedDigraph()
+    na = Node('a')
+    nb = Node('b')
+    nc = Node('c')
+    g.addNode(na)
+    g.addNode(nb)
+    g.addNode(nc)
+    e1 = WeightedEdge(na, nb, 15, 10)
+    print e1
+    print e1.getTotalDistance()
+    print e1.getOutdoorDistance()
+    e2 = WeightedEdge(na,nc,14,6)
+    e3 = WeightedEdge(nb,nc,3,1)
+    print e2
+    print e3
+    g.addEdge(e1)
+    g.addEdge(e2)
+    g.addEdge(e3)
+    print g
+    print g.childrenOf(e1)
+
+    # Pb 1 test 5
+    nh = Node('h')
+    nj = Node('j')
+    nk = Node('k')
+    nm = Node('m')
+    ng = Node('g')
+    g = WeightedDigraph()
+    g.addNode(nh)
+    g.addNode(nj)
+    g.addNode(nk)
+    g.addNode(nm)
+    g.addNode(ng)
+    randomEdge = WeightedEdge(nm, nh, 66, 44)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nm, nh, 37, 37)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nh, nm, 23, 11)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nh, nk, 83, 20)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nh, nk, 31, 24)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nm, nk, 13, 5)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nh, nm, 17, 15)
+    g.addEdge(randomEdge)
+    randomEdge = WeightedEdge(nm, nh, 68, 27)
+    g.addEdge(randomEdge)
+    print g.childrenOf(nh), "should be [h,k,m]"
+    print g.childrenOf(nj), "should be [h,k,m]"
+
+
 #     Test cases
 #     mitMap = load_map("mit_map.txt")
 #     print isinstance(mitMap, Digraph)
