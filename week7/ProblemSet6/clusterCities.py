@@ -136,20 +136,31 @@ class ClusterSet(object):
         """ Assumes clusters c1 and c2 are in self
         Adds to self a cluster containing the union of c1 and c2
         and removes c1 and c2 from self """
-        # TO DO
-        pass
+        self.add(Cluster(c1.points+c2.points, c1.pointType))
+        self.members.pop(self.members.index(c1))
+        self.members.pop(self.members.index(c2))
     def findClosest(self, linkage):
         """ Returns a tuple containing the two most similar 
         clusters in self
         Closest defined using the metric linkage """
-        # TO DO
-        pass
+        bestDist = float("inf")
+        tuple = (self.members[0], self.members[0])
+        for c1 in self.members:
+            for c2 in self.members:
+                if c1 == c2:
+                    continue
+                dist = linkage(c1,c2)
+                if dist < bestDist:
+                    bestDist = dist
+                    tuple = (c1, c2)
+        return tuple
     def mergeOne(self, linkage):
         """ Merges the two most simililar clusters in self
         Similar defined using the metric linkage
         Returns the clusters that were merged """
-        # TO DO
-        pass
+        c1, c2 = self.findClosest(linkage)
+        #print "merging" ,c1, c2
+        self.mergeClusters(c1,c2)
     def numClusters(self):
         return len(self.members)
     def toStr(self):
@@ -239,9 +250,23 @@ def hCluster(points, linkage, numClusters, printHistory):
     print cS.toStr()
     return cS
 
+def mintest():
+    points = buildCityPoints('test.txt', False)
+    print "single"
+    hCluster(points, Cluster.singleLinkageDist, 3, False)
+    print "max"
+    hCluster(points, Cluster.maxLinkageDist, 3, False)
+    print "avg"
+    hCluster(points, Cluster.averageLinkageDist, 3, False)
+ 
+
 def test():
     points = buildCityPoints('cityTemps.txt', False)
-    hCluster(points, Cluster.singleLinkageDist, 10, False)
+    print "without scaling"
+    hCluster(points, Cluster.singleLinkageDist, 5, False)
+    print "with scaling"
+    hCluster(points, Cluster.singleLinkageDist, 5, True)
+
     #points = buildCityPoints('cityTemps.txt', True)
     #hCluster(points, Cluster.maxLinkageDist, 10, False)
     #hCluster(points, Cluster.averageLinkageDist, 10, False)
